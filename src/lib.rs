@@ -8,32 +8,38 @@
 //! Take the following `C` header.
 //!
 //! ```c
-#![doc = include_str!("../examples/yakshaver/yakshaver.h")]
+#![doc = include_str!("../tests/yakshaver.h")]
 //! ```
 //!
 //! In your `build.rs` script:
 //! 1. Use [`bindgen`](https://docs.rs/bindgen) to generate equivalent Rust blocks.
 //! 2. Use [`seesaw`] to generate a trait from those bindings.
 //!
-//! ```
+//! ```no_run
 //! // build.rs
-#![doc = include_str!("../examples/yakshaver/build.rs")]
+//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! let bindings = bindgen::builder().header("yakshaver.h").generate()?;
+//! seesaw::seesaw("Yakshaver", &bindings, "generated/seesaw.rs")?;
+//! bindings.write_to_file("generated/bindgen.rs")?;
+//! # Ok(())
+//! # }
 //! ```
 //!
 //! The generated file will look like this:
 //!
 //! ```
-#![doc = include_str!("../examples/yakshaver/generated/seesaw.rs")]
+//! # struct yakshaver;
+#![doc = include_str!("../tests/generated/seesaw.rs")]
 //! ```
 //!
 //! And you can export the same ABI as the C library using [`no_mangle`],
 //! which simply adds `#[no_mangle]` to each of the functions.
 //!
 //! ```
-//! # const _: () = stringify! {
+//! # const _: &str = stringify! {
 //! #[seesaw::no_mangle]
 //! impl YakShaver for () { .. }
-//! # }
+//! # };
 //! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]

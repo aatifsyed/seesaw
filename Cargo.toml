@@ -10,6 +10,7 @@ license.workspace = true
 description.workspace = true
 keywords.workspace = true
 categories.workspace = true
+include = ["*", "!/target", "examples/*"]
 
 [features]
 default = ["build", "macros", "std"]
