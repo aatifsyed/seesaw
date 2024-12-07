@@ -15,6 +15,7 @@ syn = { version = "2.0.90", features = [
     "clone-impls",
     "visit",
 ], default-features = false }
+seesaw-macros = { version = "=0.1.0", path = "macros" }
 
 [dev-dependencies]
 bindgen = "0.70.1"
