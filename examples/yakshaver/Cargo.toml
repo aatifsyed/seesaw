@@ -1,0 +1,15 @@
+[package]
+name = "yakshaver"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[build-dependencies]
+seesaw = { path = "../..", default-features = false, features = ["build"] }
+bindgen = { version = "0.70.1" }
+
+[dependencies]
+seesaw = { path = "../..", default-features = false, features = ["macros"] }

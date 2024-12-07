@@ -5,7 +5,7 @@ use syn::{
     Token,
 };
 
-/// Accept an `impl` block, and add a `#[no_mangle]` attribute to each of the member functions.
+/// Accept an `impl` block, and add a `#[no_mangle]` attribute to each of the member
 #[proc_macro_attribute]
 pub fn no_mangle(
     attr: proc_macro::TokenStream,
