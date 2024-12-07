@@ -19,3 +19,6 @@ syn = { version = "2.0.90", features = [
 [dev-dependencies]
 bindgen = "0.70.1"
 expect-test = "1.5.0"
+
+[workspace]
+members = []
