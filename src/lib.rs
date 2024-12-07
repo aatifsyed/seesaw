@@ -36,6 +36,8 @@
 //! # }
 //! ```
 
+#![cfg_attr(not(feature = "std"), no_std)]
+
 #[cfg(feature = "macros")]
 #[doc(inline)]
 pub use seesaw_macros::no_mangle;
