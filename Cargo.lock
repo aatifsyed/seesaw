@@ -241,7 +241,7 @@ checksum = "c7fb8039b3032c191086b10f11f319a6e99e1e82889c5cc6046f515c9db1d497"
 
 [[package]]
 name = "seesaw"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "bindgen 0.71.0",
  "expect-test",
@@ -255,7 +255,7 @@ dependencies = [
 
 [[package]]
 name = "seesaw-macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",

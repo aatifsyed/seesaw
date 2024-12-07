@@ -1,6 +1,6 @@
 [package]
 name = "seesaw"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors.workspace = true
 homepage.workspace = true
@@ -10,7 +10,6 @@ license.workspace = true
 description.workspace = true
 keywords.workspace = true
 categories.workspace = true
-include = ["*", "!/target"]
 
 [features]
 default = ["build", "macros", "std"]
@@ -37,7 +36,7 @@ syn = { version = "2.0.90", features = [
     "clone-impls",
     "visit",
 ], default-features = false, optional = true }
-seesaw-macros = { version = "=0.1.1", path = "macros", optional = true }
+seesaw-macros = { version = "=0.1.2", path = "macros", optional = true }
 
 [dev-dependencies]
 bindgen = "0.71.0"
