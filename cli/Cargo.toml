@@ -12,3 +12,13 @@ keywords.workspace = true
 categories.workspace = true
 
 [dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+seesaw = { version = "0.1.3", path = "../" }
+
+[[bin]]
+name = "seesaw"
+path = "main.rs"
+
+[dev-dependencies]
+clap-doc = "0.1.1"
+expect-test = "1.5.0"
