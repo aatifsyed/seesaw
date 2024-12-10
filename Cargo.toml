@@ -44,7 +44,7 @@ bindgen = "0.71.0"
 expect-test = "1.5.0"
 
 [workspace]
-members = ["macros", "examples/yakshaver"]
+members = ["macros", "examples/yakshaver", "cli"]
 
 [workspace.package]
 authors = ["Aatif Syed <0xaatif@gmail.com>"]
