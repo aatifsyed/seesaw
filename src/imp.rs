@@ -211,7 +211,7 @@ impl Trait {
     }
     /// Equivalent to calling [`block`](Self::block) multiple times.
     pub fn block_all<S: Into<String>>(mut self, i: impl IntoIterator<Item = S>) -> Self {
-        self.allowlist.extend(i.into_iter().map(Into::into));
+        self.blocklist.extend(i.into_iter().map(Into::into));
         self
     }
 }
@@ -290,7 +290,6 @@ fn extract<'ast>(
     blocklist: &RegexSet,
     file: &'ast syn::File,
 ) -> Vec<&'ast ForeignItemFn> {
-    // fold so we don't need to have `syn --features clone-impls`
     struct Visitor<'a, 'ast> {
         allowlist: &'a RegexSet,
         blocklist: &'a RegexSet,
@@ -298,19 +297,7 @@ fn extract<'ast>(
     }
     impl<'ast> Visit<'ast> for Visitor<'_, 'ast> {
         fn visit_foreign_item_fn(&mut self, i: &'ast ForeignItemFn) {
-            let name = i.sig.ident.to_string();
-            let allowed = match (
-                self.allowlist.is_empty(),
-                self.allowlist.is_match(&name),
-                self.blocklist.is_empty(),
-                self.blocklist.is_match(&name),
-            ) {
-                (_, _, false, true) => false,  // explicit block
-                (false, true, _, _) => true,   // explicit allow
-                (false, false, _, _) => false, // not allowed
-                (true, _, _, _) => true,       // allow by default
-            };
-            if allowed {
+            if allowed(self.allowlist, self.blocklist, &i.sig.ident.to_string()) {
                 self.selected.push(i)
             };
         }
@@ -324,6 +311,37 @@ fn extract<'ast>(
     visitor.visit_file(file);
 
     visitor.selected
+}
+
+fn allowed(allowlist: &RegexSet, blocklist: &RegexSet, s: &str) -> bool {
+    match (
+        allowlist.is_empty(),
+        allowlist.is_match(s),
+        blocklist.is_empty(),
+        blocklist.is_match(s),
+    ) {
+        (_, _, false, true) => false,  // explicit block
+        (false, true, _, _) => true,   // explicit allow
+        (false, false, _, _) => false, // not allowed
+        (true, _, _, _) => true,       // allow by default
+    }
+}
+
+#[test]
+fn test_allowed() {
+    #[track_caller]
+    fn t(allow: &[&str], block: &[&str], s: &str, expected: bool) {
+        let allow = &RegexSet::new(allow).unwrap();
+        let block = &RegexSet::new(block).unwrap();
+        assert_eq!(
+            allowed(allow, block, s),
+            expected,
+            "allow={allow:?}, block={block:?} on {s}"
+        )
+    }
+    t(&[], &[], "hello", true);
+    t(&[], &["hello"], "hello", false);
+    t(&["hello"], &["goodbye"], "hello", true);
 }
 
 fn err<T>(
