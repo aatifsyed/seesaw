@@ -80,7 +80,7 @@ pub fn seesaw<'a>(
         env!("CARGO_PKG_VERSION")
     )?;
     io::copy(&mut &formatted[..], &mut writer)?;
-    Ok(())
+    writer.flush()
 }
 
 /// Utility struct for where bindings are written.
