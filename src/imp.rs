@@ -184,11 +184,14 @@ fn _seesaw(TraitSet(traits): TraitSet, bindings: String) -> io::Result<Vec<ItemT
                  name,
                  allowlist,
                  blocklist,
-                 vis,
+                 public,
              }| {
                 Ok(ItemTrait {
                     attrs: vec![parse_quote!(#[allow(unused)])],
-                    vis,
+                    vis: match public {
+                        true => Visibility::Public(Token![pub](Span::call_site())),
+                        false => Visibility::Inherited,
+                    },
                     unsafety: None,
                     auto_token: None,
                     restriction: None,
@@ -235,7 +238,7 @@ fn _seesaw(TraitSet(traits): TraitSet, bindings: String) -> io::Result<Vec<ItemT
 /// You can [`allow`](Self::allow) and [`block`](Self::block) functions for inclusion.
 #[derive(Debug, Clone)]
 pub struct Trait {
-    vis: Visibility,
+    public: bool,
     name: String,
     allowlist: Vec<String>,
     blocklist: Vec<String>,
@@ -247,7 +250,7 @@ impl Trait {
     /// This SHOULD be a valid Rust identifier.
     pub fn new(name: impl Into<String>) -> Self {
         Self {
-            vis: Visibility::Public(Token![pub](Span::call_site())),
+            public: true,
             name: name.into(),
             allowlist: vec![],
             blocklist: vec![],
@@ -255,7 +258,7 @@ impl Trait {
     }
     /// Change the visibility of the generated trait to private.
     pub fn private(mut self) -> Self {
-        self.vis = Visibility::Inherited;
+        self.public = false;
         self
     }
     /// Include functions that match this regex in the trait.
