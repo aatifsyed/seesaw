@@ -8,6 +8,7 @@ use std::{
     path::PathBuf,
     process::{Command, Stdio},
     str,
+    sync::Arc,
 };
 
 use proc_macro2::Span;
@@ -120,6 +121,52 @@ impl<'a> From<&'a mut String> for Destination<'a> {
     fn from(value: &'a mut String) -> Self {
         Self::Writer(Box::new(Write2Write(value)))
     }
+}
+
+macro_rules! ref_writer {
+    ($($ty:ty),* $(,)?) => {
+        $(
+            impl<'a> From<&'a $ty> for Destination<'a> {
+                fn from(value: &'a $ty) -> Self {
+                    Self::Writer(Box::new(value))
+                }
+            }
+        )*
+    };
+}
+macro_rules! own_writer {
+    ($($ty:ty),* $(,)?) => {
+        $(
+            impl From<$ty> for Destination<'_> {
+                fn from(value: $ty) -> Self {
+                    Self::Writer(Box::new(value))
+                }
+            }
+        )*
+    };
+}
+
+ref_writer! {
+    io::Empty,
+    io::Sink,
+    io::Stderr,
+    io::Stdout,
+    std::fs::File,
+    std::net::TcpStream,
+    std::process::ChildStdin,
+}
+
+own_writer! {
+    Arc<std::fs::File>,
+    io::Empty,
+    io::Sink,
+    io::Stderr,
+    io::Stdout,
+    std::fs::File,
+    std::io::StderrLock<'static>,
+    std::io::StdoutLock<'static>,
+    std::net::TcpStream,
+    std::process::ChildStdin,
 }
 
 fn _seesaw(TraitSet(traits): TraitSet, bindings: String) -> io::Result<Vec<ItemTrait>> {
